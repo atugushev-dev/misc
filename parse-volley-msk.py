@@ -1,16 +1,14 @@
 # coding: utf-8
 
 import re
-import sys
 import requests
-import pprint
 import unicodecsv as csv
 
 
 class Applications:
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:28.0) Gecko/20100101 Firefox/28.0',
-        'Cookie': '', # Set authorized cookies here
+        'Cookie': '',  # Set authorized cookies here
     }
 
     output = [
@@ -43,7 +41,9 @@ class Applications:
                 continue
 
     def load_info(self, team_id):
-        content = self.get_url('http://volleymsk.ru/ap/application_raw_view.php?id={team_id}#m_c'.format(team_id=team_id))
+        content = self.get_url(
+            'http://volleymsk.ru/ap/application_raw_view.php?id={team_id}#m_c'.format(team_id=team_id)
+        )
 
         REGEXP_CONTACT = [
             re.compile(r"<td.*?>.*?Команда.*?</td>\s*\n\s*<td.*><b>(.+)</b>", re.MULTILINE),
@@ -59,11 +59,11 @@ class Applications:
             row.append(cell)
 
         REGEXP_MEMBERS = re.compile(r'<td width="90"><b>(.+)</b>.*\n.*'
-                                 r'<td width="90"><b>(.+)</b>.*\n.*'
-                                 r'<td width="90"><b>(.+)</b>.*?\n.*?</tr>.*?\n.*?<tr>.*?\n.*?'
-                                 r'<td>Рост:</td><td><b>(.+)</b>.*\n.*'
-                                 r'<td>Мастерство:</td><td><b>(.+)</b>'
-                                 , re.MULTILINE)
+                                    r'<td width="90"><b>(.+)</b>.*\n.*'
+                                    r'<td width="90"><b>(.+)</b>.*?\n.*?</tr>.*?\n.*?<tr>.*?\n.*?'
+                                    r'<td>Рост:</td><td><b>(.+)</b>.*\n.*'
+                                    r'<td>Мастерство:</td><td><b>(.+)</b>', re.MULTILINE)
+
         members = []
         result = re.finditer(REGEXP_MEMBERS, content)
         for match in result:
@@ -148,8 +148,7 @@ class Teams(Applications):
 
         REGEXP_MEMBERS = re.compile(r'<td.*?>.*?\n.*?<strong>.*?\n(.+?\n.+?\n.+?\n).*?</strong>.*?\n.*?\n.*?\n.*?'
                                     r'<td.*?>.*?\n.*?Рост:&nbsp;<strong>(.+)</strong>.*?\n.*?'
-                                    r'Мастерство:&nbsp;<strong>(.+?)</strong>'
-                                    , re.MULTILINE)
+                                    r'Мастерство:&nbsp;<strong>(.+?)</strong>', re.MULTILINE)
 
         result = re.finditer(REGEXP_MEMBERS, content)
         for match in result:
