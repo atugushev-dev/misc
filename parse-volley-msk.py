@@ -52,41 +52,37 @@ class Applications:
             re.compile(r"<td.*?>.*?E-mail.*?</td>\s*\n\s*<td.*><b>(.+)</b>", re.MULTILINE),
         ]
 
-        REGEXP_TEAM = [
-                re.compile(r'<td width="90"><b>(.+)</b>.*\n.*'
-                           r'<td width="90"><b>(.+)</b>.*\n.*'
-                           r'<td width="90"><b>(.+)</b>.*?\n.*?</tr>.*?\n.*?<tr>.*?\n.*?'
-                           r'<td>Рост:</td><td><b>(.+)</b>.*\n.*'
-                           r'<td>Мастерство:</td><td><b>(.+)</b>'
-                           , re.MULTILINE),
-        ]
-
         row = []
         for regexp in REGEXP_CONTACT:
             result = re.search(regexp, content)
             cell = re.sub('<img.*?>', '@', result.group(1))
             row.append(cell)
 
-        team = []
-        for regexp in REGEXP_TEAM:
-            result = re.finditer(regexp, content)
-            for match in result:
-                last_name, first_name, middle_name, height, skill = match.groups()
-                team.append([
-                    ' '.join([last_name, first_name, middle_name]),
-                    height,
-                    skill,
-                ])
+        REGEXP_MEMBERS = re.compile(r'<td width="90"><b>(.+)</b>.*\n.*'
+                                 r'<td width="90"><b>(.+)</b>.*\n.*'
+                                 r'<td width="90"><b>(.+)</b>.*?\n.*?</tr>.*?\n.*?<tr>.*?\n.*?'
+                                 r'<td>Рост:</td><td><b>(.+)</b>.*\n.*'
+                                 r'<td>Мастерство:</td><td><b>(.+)</b>'
+                                 , re.MULTILINE)
+        members = []
+        result = re.finditer(REGEXP_MEMBERS, content)
+        for match in result:
+            last_name, first_name, middle_name, height, skill = match.groups()
+            members.append([
+                ' '.join([last_name, first_name, middle_name]),
+                height,
+                skill,
+            ])
 
-        if not team:
-            team = [[''] * 3]
+        if not members:
+            members = [[''] * 3]
 
-        first_member = team.pop(0)
+        first_member = members.pop(0)
         row += first_member
 
         self.output.append(row)
 
-        for member in team:
+        for member in members:
             self.output.append([''] * 4 + member)
 
         print 'OK'
