@@ -34,8 +34,8 @@ class Applications:
         result = re.finditer(r'application_raw_view.php\?id=(\d+)#m_c', data)
         for match in result:
             team_id = match.group(1)
+
             print 'Load %s ...' % team_id
-            #self.load_info(4170)
             try:
                 self.load_info(team_id)
             except Exception as e:
@@ -146,8 +146,6 @@ class Teams(Applications):
     def get_last_members(self, mid):
         print '    load members %s ...' % mid
 
-        #f = open('team_members.html')
-        #content = f.read()
         content = self.get_url('http://volleymsk.ru/ap/members.php?id={mid}'.format(mid=mid))
 
         members = []
